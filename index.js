@@ -4,6 +4,8 @@ const app = express();
 const { MongoClient } = require("mongodb");
 //Query by id 
 const ObjectId = require('mongodb').ObjectId;
+//Query by email
+const user = require("mongodb").user;
 //Cors
 var cors = require("cors");
 //DotEnv
@@ -72,6 +74,14 @@ async function run() {
             res.send(result);
             console.log(result);
         });
+        //user Cart
+        app.get('/cart/:email', async(req, res)=>{
+            const userCart = req.params.email;
+            console.log(userCart);
+            const query = {user: userCart};
+            const result = await cart.find(query).toArray();
+            res.send(result);
+        })
 
     }
     finally {
