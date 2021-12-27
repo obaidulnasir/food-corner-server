@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 //Mongo Client
 const { MongoClient } = require("mongodb");
+//Query by id 
+const ObjectId = require('mongodb').ObjectId;
 //Cors
 var cors = require("cors");
 //DotEnv
@@ -36,6 +38,9 @@ async function run() {
         //Product collection
         const product = foodCorner.collection("product");
 
+        //CART collection
+        const cart = foodCorner.collection("cart");
+
 
         //ADD Product 
         app.post('/addProduct', async(req, res)=>{
@@ -49,7 +54,25 @@ async function run() {
             const result = await product.find({}).toArray();
             res.send(result);
             // console.log(result);
-        })
+        });
+
+        //GET single Product
+        app.get('/product/:id', async(req, res)=>{
+            const productId = req.params.id;
+            const query = {_id: ObjectId(productId)};
+            const result= await product.findOne(query);
+            res.send(result);
+        });
+
+        //CART
+        //Product added in Cart
+        app.post('/addToCart', async(req, res)=>{
+            const newCart = req.body;
+            const result = await cart.insertOne(newCart);
+            res.send(result);
+            console.log(result);
+        });
+
     }
     finally {
         // await client.close();
