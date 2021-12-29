@@ -6,6 +6,7 @@ const { MongoClient } = require("mongodb");
 const ObjectId = require('mongodb').ObjectId;
 //Query by email
 const user = require("mongodb").user;
+const email = require("mongodb").email;
 //Cors
 var cors = require("cors");
 //DotEnv
@@ -42,6 +43,9 @@ async function run() {
 
         //CART collection
         const cart = foodCorner.collection("cart");
+
+        //ADDRESS Collection
+        const address = foodCorner.collection("address");
 
 
         //ADD Product 
@@ -81,7 +85,24 @@ async function run() {
             const query = {user: userCart};
             const result = await cart.find(query).toArray();
             res.send(result);
-        })
+        });
+
+        //POST User Address
+        app.post('/userAddress', async(req, res)=>{
+            const newAddress = req.body;
+            const result = await address.insertOne(newAddress);
+            // console.log(result);
+            res.send(result);
+        });
+
+         app.get('/userAddress/:email', async(req, res)=>{
+            const userAddress = req.params.email;
+            console.log(userAddress);
+            const query = {email: userAddress};
+            const result = await address.findOne(query);
+            res.send(result);
+            console.log(result)
+        });
 
     }
     finally {
